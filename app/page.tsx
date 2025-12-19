@@ -101,7 +101,7 @@ const Header = () => {
 }
 
 // Section wrapper for animations
-const AnimatedSection = ({ children, className }) => {
+const AnimatedSection = ({ children, className, ...props }) => {
   const controls = useAnimation()
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -126,6 +126,7 @@ const AnimatedSection = ({ children, className }) => {
       initial="hidden"
       variants={variants}
       className={className}
+      {...props}
     >
       {children}
     </motion.section>
