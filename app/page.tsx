@@ -1,173 +1,297 @@
-"use client";
+'use client'
 
-import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Play, CheckCircle, ArrowRight, Video, Instagram, Youtube } from "lucide-react";
+import { useState, useEffect } from 'react'
+import { motion, useAnimation } from 'framer-motion'
+import { useInView } from 'react-intersection-observer'
+import { Menu, X, Video, Film, Clapperboard, Youtube } from 'lucide-react'
 
-/* --- Internal Components --- */
+// Main Page Component
+export default function HomePage() {
+  return (
+    <div className="bg-zinc-950 text-white font-sans">
+      <Header />
+      <main>
+        <HeroSection />
+        <ProblemSolutionSection />
+        <ServicesSection />
+        <PortfolioSection />
+        <CTASection />
+      </main>
+      <Footer />
+    </div>
+  )
+}
 
-const FadeIn = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay }}
-  >
-    {children}
-  </motion.div>
-);
+// Navigation Header
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false)
 
-const Navbar = () => (
-  <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-    <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div className="text-xl font-bold text-white tracking-tighter">AstraEdits</div>
-      <div className="hidden md:flex items-center gap-8">
-        <Link href="#work" className="text-sm text-gray-400 hover:text-white transition-colors">Work</Link>
-        <Link href="#services" className="text-sm text-gray-400 hover:text-white transition-colors">Services</Link>
-        <Link 
-          href="https://calendly.com" 
+  const navLinks = [
+    { href: '#portfolio', label: 'Work' },
+    { href: '#services', label: 'Services' },
+  ]
+
+  return (
+    <header className="sticky top-0 z-50 bg-zinc-950 bg-opacity-80 backdrop-blur-lg">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex-shrink-0">
+            <a href="#" className="text-2xl font-bold">
+              AstraEdits
+            </a>
+          </div>
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="px-3 py-2 text-sm font-medium text-gray-300 hover:text-white"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <a
+                href="https://calendly.com/satytmr008/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-gray-200"
+              >
+                Book Strategy Call
+              </a>
+            </div>
+          </div>
+          <div className="-mr-2 flex md:hidden">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+      {isOpen && (
+        <div className="md:hidden">
+          <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="https://calendly.com/satytmr008/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsOpen(false)}
+              className="block rounded-md bg-white px-3 py-2 text-base font-medium text-black hover:bg-gray-200"
+            >
+              Book Strategy Call
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  )
+}
+
+// Section wrapper for animations
+const AnimatedSection = ({ children, className }) => {
+  const controls = useAnimation()
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  })
+
+  useEffect(() => {
+    if (inView) {
+      controls.start('visible')
+    }
+  }, [controls, inView])
+
+  const variants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  }
+
+  return (
+    <motion.section
+      ref={ref}
+      animate={controls}
+      initial="hidden"
+      variants={variants}
+      className={className}
+    >
+      {children}
+    </motion.section>
+  )
+}
+
+// Hero Section
+const HeroSection = () => (
+  <AnimatedSection className="py-24 sm:py-32 text-center">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl">
+        We Turn Passive Viewers Into
+        <br />
+        <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Loyal Communities.
+        </span>
+      </h1>
+      <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
+        Premium video editing for creators and brands who demand retention. You film the vision; we engineer the attention.
+      </p>
+      <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <a
+          href="https://calendly.com/satytmr008/30min"
           target="_blank"
-          className="bg-white text-black px-4 py-2 text-sm font-semibold rounded-full hover:bg-gray-200 transition-all"
+          rel="noopener noreferrer"
+          className="w-full sm:w-auto rounded-md bg-white px-8 py-3 text-base font-medium text-black hover:bg-gray-200"
         >
-          Book Strategy Call
-        </Link>
+          Book Your Free Strategy Call
+        </a>
+        <a
+          href="#portfolio"
+          className="w-full sm:w-auto rounded-md border border-white px-8 py-3 text-base font-medium text-white hover:bg-zinc-800"
+        >
+          View Our Work
+        </a>
       </div>
     </div>
-  </nav>
-);
+  </AnimatedSection>
+)
 
-/* --- Main Page --- */
+// Problem/Solution Section
+const ProblemSolutionSection = () => (
+  <AnimatedSection className="py-16 sm:py-24 bg-black">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-3xl">
+      <h2 className="text-3xl font-bold sm:text-4xl">
+        Is Your Content Getting the Reach It Deserves?
+      </h2>
+      <p className="mt-4 text-gray-300 text-lg">
+        Great content dies without great editing. In a world of 3-second attention spans, your raw footage is just potential. AstraEdits unlocks that potential. We don't just cut clips; we craft narratives that keep audiences watching till the very last second.
+      </p>
+    </div>
+  </AnimatedSection>
+)
 
-export default function Home() {
+// Services Section
+const services = [
+  {
+    icon: <Video size={32} className="text-purple-400" />,
+    title: 'Short-Form Retention',
+    description: 'Reels, Shorts, and TikToks engineered to hook viewers instantly and maximize watch time.',
+  },
+  {
+    icon: <Film size={32} className="text-blue-400" />,
+    title: 'Long-Form Storytelling',
+    description: 'YouTube videos that build authority and connection through masterful narrative crafting.',
+  },
+  {
+    icon: <Clapperboard size={32} className="text-white" />,
+    title: 'Visual Identity',
+    description: 'High-impact thumbnails, motion graphics, and branding that make your content unmistakable.',
+  },
+]
+
+const ServicesSection = () => (
+  <AnimatedSection id="services" className="py-16 sm:py-24">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        {services.map((service) => (
+          <div key={service.title} className="rounded-xl border border-zinc-800 bg-zinc-900 p-8">
+            <div className="mb-4">{service.icon}</div>
+            <h3 className="text-xl font-bold">{service.title}</h3>
+            <p className="mt-2 text-gray-400">{service.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </AnimatedSection>
+)
+
+// Portfolio Section
+const VideoCard = ({ youtubeUrl }) => {
+  let videoId = '';
+  if (youtubeUrl.includes('youtu.be/')) {
+    videoId = youtubeUrl.split('/').pop()?.split('?')[0];
+  } else if (youtubeUrl.includes('watch?v=')) {
+    videoId = new URL(youtubeUrl).searchParams.get('v');
+  }
+
+  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+
+  if (!embedUrl) {
+    return (
+      <div className="aspect-[6.83/1] flex items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900">
+        <p className="text-sm text-zinc-500">Invalid YouTube URL</p>
+      </div>
+    );
+  }
+  
   return (
-    <main className="min-h-screen bg-black text-white font-sans selection:bg-purple-500/30">
-      <Navbar />
-
-      {/* HERO SECTION */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-purple-900/20 blur-[120px] rounded-full pointer-events-none" />
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <FadeIn>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-              We Turn Passive Viewers Into <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">Loyal Communities.</span>
-            </h1>
-          </FadeIn>
-          
-          <FadeIn delay={0.2}>
-            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-              Premium video editing for creators and brands who demand retention. 
-              You film the vision; we engineer the attention.
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.4}>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-              <Link 
-                href="https://calendly.com" 
-                target="_blank"
-                className="w-full md:w-auto px-8 py-4 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
-              >
-                Book Your Free Strategy Call
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link 
-                href="#work"
-                className="w-full md:w-auto px-8 py-4 bg-white/10 border border-white/10 text-white font-semibold rounded-full hover:bg-white/20 transition-all"
-              >
-                View Our Work
-              </Link>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* PROBLEM / SOLUTION */}
-      <section className="py-24 bg-zinc-950 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Is Your Content Getting the Reach It Deserves?</h2>
-            <p className="text-gray-400 text-lg leading-relaxed">
-              Great content dies without great editing. In a world of 3-second attention spans, 
-              your raw footage is just potential. <span className="text-white font-semibold">AstraEdits</span> unlocks that potential. 
-              We don't just cut clips; we craft narratives that keep audiences watching till the very last second.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* SERVICES */}
-      <section id="services" className="py-24 px-6 relative">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { title: "Short-Form Retention", desc: "Reels/Shorts/TikToks that hook instantly and retain users.", icon: <Video className="w-6 h-6 text-purple-400" /> },
-              { title: "Long-Form Storytelling", desc: "YouTube videos that build authority and maximize watch time.", icon: <Youtube className="w-6 h-6 text-red-400" /> },
-              { title: "Visual Identity", desc: "Thumbnails and motion graphics that define your brand.", icon: <CheckCircle className="w-6 h-6 text-blue-400" /> }
-            ].map((service, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <div className="p-8 rounded-2xl bg-zinc-900 border border-white/5 hover:border-purple-500/30 transition-colors h-full">
-                  <div className="mb-4 bg-white/5 w-12 h-12 rounded-lg flex items-center justify-center">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                  <p className="text-gray-400">{service.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PORTFOLIO */}
-      <section id="work" className="py-24 px-6 bg-zinc-950">
-        <div className="max-w-6xl mx-auto">
-          <FadeIn>
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">The Astra Standard</h2>
-          </FadeIn>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* VIDEO 1 PLACEHOLDER */}
-            <FadeIn>
-              <div className="aspect-video rounded-xl overflow-hidden bg-zinc-900 border border-white/10 relative group">
-                <iframe 
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=placeholder" 
-                  title="Portfolio Video 1"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </FadeIn>
-            {/* VIDEO 2 PLACEHOLDER */}
-            <FadeIn delay={0.1}>
-              <div className="aspect-video rounded-xl overflow-hidden bg-zinc-900 border border-white/10 relative group">
-                <iframe 
-                  className="w-full h-full"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=placeholder" 
-                  title="Portfolio Video 2"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </FadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="py-12 px-6 border-t border-white/10 text-center">
-        <h2 className="text-2xl font-bold mb-6">Ready to scale your content?</h2>
-        <Link 
-          href="https://calendly.com" 
-          target="_blank"
-          className="inline-block px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-all mb-8"
-        >
-          Start Your Project
-        </Link>
-        <p className="text-gray-500 text-sm">© 2025 AstraEdits. All rights reserved.</p>
-      </footer>
-    </main>
-  );
+    <div className="aspect-[6.83/1] overflow-hidden rounded-lg border border-zinc-800">
+      <iframe
+        src={embedUrl}
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="h-full w-full"
+      ></iframe>
+    </div>
+  )
 }
+
+const portfolioItems = [
+  { url: 'https://youtu.be/ppRDwgoZkUo' }, // User's video
+]
+
+const PortfolioSection = () => (
+  <AnimatedSection id="portfolio" className="py-16 sm:py-24 bg-black">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-center text-3xl font-bold sm:text-4xl">
+        The Astra Standard
+      </h2>
+      <div className="mt-12 max-w-4xl mx-auto"> {/* Centered and wider */}
+        {portfolioItems.map((item, index) => (
+          <VideoCard key={index} youtubeUrl={item.url} />
+        ))}
+      </div>
+    </div>
+  </AnimatedSection>
+)
+
+
+// Final Call-to-Action
+const CTASection = () => (
+    <AnimatedSection id="contact" className="py-16 sm:py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-bold sm:text-4xl">Ready to scale your content?</h2>
+        <div className="mt-8">
+          <a
+            href="https://calendly.com/satytmr008/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md bg-white px-8 py-3 text-base font-medium text-black hover:bg-gray-200"
+          >
+            Start Your Project
+          </a>
+        </div>
+      </div>
+    </AnimatedSection>
+  )
+
+// Footer
+const Footer = () => (
+  <footer className="bg-black py-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+      <p>&copy; 2025 AstraEdits</p>
+    </div>
+  </footer>
+)
