@@ -1,0 +1,10 @@
+<svg width="250" height="80" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- Star Icon -->
+    <path fill="#FFFFFF" d="M35,15 L41.75,28.5 L56.5,30.5 L45.75,40.5 L48.25,55 L35,47.5 L21.75,55 L24.25,40.5 L13.5,30.5 L28.25,28.5 Z"/>
+
+    <!-- Text: "AstraEdits" -->
+    <text x="70" y="52" font-family="'Montserrat', sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">
+        AstraEdits
+    </text>
+</svg>
+
